@@ -3,1512 +3,375 @@
 <head>
   <meta charset="UTF-8" />
   <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no" />
-  <title>লুডু টুর্নামেন্ট প্রো — মোবাইল অ্যাপ</title>
-  <meta name="theme-color" content="#0b1020" />
-  <meta name="apple-mobile-web-app-capable" content="yes" />
-  <meta name="apple-mobile-web-app-status-bar-style" content="black-translucent" />
-  <meta name="apple-mobile-web-app-title" content="LudoTourney" />
+  <title>Ludo Tournament Pro</title>
   <link rel="manifest" href="manifest.json" />
-  <link rel="icon" type="image/svg+xml" href="data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 128 128'%3E%3Crect width='128' height='128' rx='28' fill='%230b1020'/%3E%3Crect x='16' y='16' width='42' height='42' rx='9' fill='%23ef4444'/%3E%3Crect x='70' y='16' width='42' height='42' rx='9' fill='%2322c55e'/%3E%3Crect x='16' y='70' width='42' height='42' rx='9' fill='%233b82f6'/%3E%3Crect x='70' y='70' width='42' height='42' rx='9' fill='%23eab308'/%3E%3Ccircle cx='64' cy='64' r='17' fill='%23ffffff'/%3E%3C/svg%3E" />
-  <link rel="apple-touch-icon" href="data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 192 192'%3E%3Crect width='192' height='192' rx='42' fill='%230b1020'/%3E%3Crect x='24' y='24' width='64' height='64' rx='14' fill='%23ef4444'/%3E%3Crect x='104' y='24' width='64' height='64' rx='14' fill='%2322c55e'/%3E%3Crect x='24' y='104' width='64' height='64' rx='14' fill='%233b82f6'/%3E%3Crect x='104' y='104' width='64' height='64' rx='14' fill='%23eab308'/%3E%3Ccircle cx='96' cy='96' r='26' fill='%23ffffff'/%3E%3C/svg%3E" />
+  <meta name="theme-color" content="#0f172a" />
   <style>
     :root {
-      --bg: #0b1020;
-      --card: #131b33;
-      --card-2: #192444;
+      --bg: #0b1120;
+      --card: #1e293b;
+      --card-light: #334155;
+      --primary: #10b981;
+      --primary-dark: #059669;
+      --accent: #f59e0b;
+      --danger: #ef4444;
       --text: #f8fafc;
       --muted: #94a3b8;
-      --accent: #f59e0b;
-      --accent-2: #10b981;
-      --danger: #ef4444;
-      --border: rgba(255, 255, 255, 0.09);
-      --red: #ef4444;
-      --green: #22c55e;
-      --yellow: #eab308;
-      --blue: #3b82f6;
     }
+    * { box-sizing: border-box; margin: 0; padding: 0; font-family: 'Segoe UI', system-ui, sans-serif; }
+    body { background: var(--bg); color: var(--text); min-height: 100vh; padding-bottom: 75px; }
 
-    * {
-      box-sizing: border-box;
-      margin: 0;
-      padding: 0;
-      -webkit-tap-highlight-color: transparent;
-    }
-
-    body {
-      font-family: -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, "Noto Sans Bengali", sans-serif;
-      background: radial-gradient(circle at top, #172347 0%, var(--bg) 58%);
-      color: var(--text);
+    /* Auth Screen */
+    #auth-screen {
       min-height: 100vh;
-      padding-bottom: 84px;
+      display: flex;
+      flex-direction: column;
+      justify-content: center;
+      padding: 20px;
+      background: radial-gradient(circle at top, #1e293b 0%, #0b1120 75%);
     }
-
-    .app-shell {
-      max-width: 960px;
+    .auth-box {
+      background: var(--card);
+      border: 1px solid #334155;
+      border-radius: 18px;
+      padding: 24px 20px;
+      max-width: 400px;
+      width: 100%;
       margin: 0 auto;
-      padding: 14px;
+      box-shadow: 0 15px 35px rgba(0,0,0,0.45);
     }
-
-    .topbar {
-      display: flex;
-      align-items: center;
-      justify-content: space-between;
-      gap: 10px;
-      background: rgba(19, 27, 51, 0.92);
-      backdrop-filter: blur(12px);
-      border: 1px solid var(--border);
-      padding: 12px 14px;
-      border-radius: 16px;
-      position: sticky;
-      top: 10px;
-      z-index: 30;
-      margin-bottom: 14px;
-    }
-
-    .brand {
-      display: flex;
-      align-items: center;
-      gap: 10px;
-    }
-
+    .brand-header { text-align: center; margin-bottom: 22px; }
     .brand-logo {
-      width: 40px;
-      height: 40px;
-      border-radius: 12px;
-      background: linear-gradient(135deg, #f59e0b, #ef4444);
-      display: grid;
-      place-items: center;
-      font-weight: 900;
-      font-size: 20px;
-      color: #fff;
-      box-shadow: 0 6px 18px rgba(245, 158, 11, 0.3);
-    }
-
-    .brand h1 {
-      font-size: 16px;
-      font-weight: 800;
-      line-height: 1.25;
-    }
-
-    .brand span {
-      font-size: 11px;
-      color: var(--muted);
-      display: block;
-    }
-
-    .top-actions {
-      display: flex;
-      align-items: center;
-      gap: 8px;
-      flex-wrap: wrap;
-      justify-content: flex-end;
-    }
-
-    .pill {
-      background: var(--card-2);
-      border: 1px solid var(--border);
-      padding: 7px 12px;
-      border-radius: 999px;
-      font-size: 13px;
-      font-weight: 700;
-      display: inline-flex;
-      align-items: center;
-      gap: 6px;
-      cursor: pointer;
-      color: var(--text);
-    }
-
-    .pill.balance {
-      color: #34d399;
-      border-color: rgba(16, 185, 129, 0.35);
-    }
-
-    .pill.install-btn {
+      width: 64px; height: 64px; border-radius: 16px;
       background: linear-gradient(135deg, #10b981, #059669);
-      color: #fff;
-      border: none;
+      display: inline-flex; align-items: center; justify-content: center;
+      font-size: 32px; margin-bottom: 10px; box-shadow: 0 8px 20px rgba(16,185,129,0.3);
+    }
+    .brand-header h1 { font-size: 22px; font-weight: 700; color: #fff; }
+    .brand-header p { font-size: 13px; color: var(--muted); margin-top: 4px; }
+
+    .auth-tabs {
+      display: grid; grid-template-columns: 1fr 1fr;
+      background: #0f172a; padding: 4px; border-radius: 12px; margin-bottom: 20px;
+    }
+    .auth-tab {
+      padding: 10px; text-align: center; border: none; background: transparent;
+      color: var(--muted); font-weight: 600; font-size: 14px; border-radius: 9px; cursor: pointer;
+    }
+    .auth-tab.active { background: var(--primary); color: #fff; }
+
+    .form-group { margin-bottom: 14px; }
+    .form-group label { display: block; font-size: 13px; color: #cbd5e1; margin-bottom: 6px; }
+    .form-group input {
+      width: 100%; padding: 12px 14px; border-radius: 10px;
+      border: 1px solid #334155; background: #0f172a; color: #fff; font-size: 14px; outline: none;
+    }
+    .form-group input:focus { border-color: var(--primary); }
+
+    .btn-primary {
+      width: 100%; padding: 13px; border: none; border-radius: 11px;
+      background: linear-gradient(135deg, var(--primary), var(--primary-dark));
+      color: #fff; font-size: 15px; font-weight: 700; cursor: pointer; margin-top: 6px;
+    }
+    .btn-primary:active { transform: scale(0.98); }
+    .auth-msg { font-size: 13px; text-align: center; margin-top: 12px; color: var(--danger); min-height: 18px; }
+
+    /* Main App */
+    #app-screen { display: none; }
+    .topbar {
+      background: #1e293b; padding: 14px 16px; display: flex;
+      justify-content: space-between; align-items: center;
+      border-bottom: 1px solid #334155; position: sticky; top: 0; z-index: 10;
+    }
+    .user-info h2 { font-size: 16px; font-weight: 700; }
+    .user-info span { font-size: 12px; color: var(--muted); }
+    .wallet-pill {
+      background: #0f172a; border: 1px solid var(--primary);
+      padding: 6px 12px; border-radius: 20px; font-size: 13px; font-weight: 700; color: var(--primary);
     }
 
-    .install-banner {
-      display: none;
-      align-items: center;
-      justify-content: space-between;
-      gap: 12px;
-      background: linear-gradient(135deg, rgba(16, 185, 129, 0.18), rgba(59, 130, 246, 0.16));
-      border: 1px solid rgba(16, 185, 129, 0.35);
-      padding: 12px 14px;
-      border-radius: 16px;
-      margin-bottom: 14px;
-      flex-wrap: wrap;
+    .container { padding: 16px; max-width: 500px; margin: 0 auto; }
+    .notice-bar {
+      background: rgba(245, 158, 11, 0.15); border: 1px solid rgba(245, 158, 11, 0.4);
+      color: #fcd34d; padding: 10px 12px; border-radius: 10px; font-size: 13px; margin-bottom: 16px;
     }
+    .section-title { font-size: 16px; font-weight: 700; margin-bottom: 12px; display: flex; justify-content: space-between; }
 
-    .install-banner.show {
-      display: flex;
+    .match-card {
+      background: var(--card); border: 1px solid #334155; border-radius: 14px;
+      padding: 15px; margin-bottom: 14px;
     }
-
-    .install-banner strong {
-      font-size: 14px;
-      display: block;
+    .match-top { display: flex; justify-content: space-between; align-items: center; margin-bottom: 10px; }
+    .badge { background: rgba(16,185,129,0.2); color: var(--primary); padding: 4px 10px; border-radius: 20px; font-size: 11px; font-weight: 700; }
+    .match-title { font-size: 16px; font-weight: 700; margin-bottom: 10px; }
+    .match-stats {
+      display: grid; grid-template-columns: repeat(3, 1fr); gap: 8px;
+      background: #0f172a; padding: 10px; border-radius: 10px; text-align: center; margin-bottom: 12px;
     }
-
-    .install-banner p {
-      font-size: 12px;
-      color: #cbd5e1;
-      margin-top: 2px;
+    .stat-label { font-size: 11px; color: var(--muted); }
+    .stat-val { font-size: 14px; font-weight: 700; color: #fff; margin-top: 2px; }
+    .join-btn {
+      width: 100%; padding: 10px; border: none; border-radius: 9px;
+      background: var(--primary); color: #fff; font-weight: 700; font-size: 14px; cursor: pointer;
     }
+    .join-btn.joined { background: #334155; color: #cbd5e1; }
 
-    .desktop-nav {
-      display: flex;
-      gap: 8px;
-      margin-bottom: 16px;
-      flex-wrap: wrap;
-    }
-
-    .nav-btn {
-      background: var(--card);
-      color: var(--muted);
-      border: 1px solid var(--border);
-      padding: 10px 14px;
-      border-radius: 12px;
-      font-size: 13px;
-      font-weight: 700;
-      cursor: pointer;
-      transition: 0.2s ease;
-    }
-
-    .nav-btn.active {
-      background: linear-gradient(135deg, #f59e0b, #d97706);
-      color: #0b1020;
-      border-color: transparent;
-    }
-
-    .section {
-      display: none;
-    }
-
-    .section.active {
-      display: block;
-      animation: fadeIn 0.22s ease;
-    }
-
-    @keyframes fadeIn {
-      from { opacity: 0; transform: translateY(6px); }
-      to { opacity: 1; transform: translateY(0); }
-    }
-
-    .grid-2 {
-      display: grid;
-      grid-template-columns: repeat(2, minmax(0, 1fr));
-      gap: 14px;
-    }
-
-    @media (max-width: 720px) {
-      .grid-2 { grid-template-columns: 1fr; }
-      .desktop-nav { display: none; }
-    }
-
-    .card {
-      background: var(--card);
-      border: 1px solid var(--border);
-      border-radius: 18px;
-      padding: 16px;
-      margin-bottom: 14px;
-    }
-
-    .card-title {
-      font-size: 15px;
-      font-weight: 800;
-      margin-bottom: 12px;
-      display: flex;
-      align-items: center;
-      justify-content: space-between;
-      gap: 8px;
-      flex-wrap: wrap;
-    }
-
-    .hero-wallet {
-      background: linear-gradient(135deg, #1e293b 0%, #0f172a 55%, #31102f 100%);
-      border: 1px solid rgba(245, 158, 11, 0.28);
-      border-radius: 20px;
-      padding: 18px;
-      margin-bottom: 14px;
-      display: flex;
-      flex-wrap: wrap;
-      align-items: center;
-      justify-content: space-between;
-      gap: 14px;
-    }
-
-    .hero-wallet .amount {
-      font-size: 28px;
-      font-weight: 900;
-      color: #34d399;
-      margin: 4px 0;
-    }
-
-    .id-badge {
-      display: inline-flex;
-      align-items: center;
-      gap: 6px;
-      background: rgba(245, 158, 11, 0.15);
-      border: 1px solid rgba(245, 158, 11, 0.35);
-      color: #fbbf24;
-      padding: 4px 10px;
-      border-radius: 999px;
-      font-size: 12px;
-      font-weight: 800;
-      margin-top: 4px;
-    }
-
-    .btn {
-      border: none;
-      border-radius: 12px;
-      padding: 10px 14px;
-      font-size: 13px;
-      font-weight: 800;
-      cursor: pointer;
-      display: inline-flex;
-      align-items: center;
-      justify-content: center;
-      gap: 6px;
-      transition: transform 0.12s ease, opacity 0.15s ease;
-    }
-
-    .btn:active { transform: scale(0.97); }
-    .btn:disabled { opacity: 0.45; cursor: not-allowed; }
-    .btn-primary { background: linear-gradient(135deg, #f59e0b, #ea580c); color: #fff; }
-    .btn-success { background: linear-gradient(135deg, #10b981, #059669); color: #fff; }
-    .btn-secondary { background: var(--card-2); color: var(--text); border: 1px solid var(--border); }
-    .btn-danger { background: rgba(239, 68, 68, 0.16); color: #fca5a5; border: 1px solid rgba(239, 68, 68, 0.35); }
-    .btn-sm { padding: 7px 11px; font-size: 12px; border-radius: 10px; }
-
-    .tourney-card {
-      background: var(--card-2);
-      border: 1px solid var(--border);
-      border-radius: 16px;
-      padding: 14px;
-      display: flex;
-      flex-direction: column;
-      gap: 10px;
-    }
-
-    .tourney-top {
-      display: flex;
-      justify-content: space-between;
-      align-items: flex-start;
-      gap: 8px;
-    }
-
-    .badge {
-      font-size: 11px;
-      font-weight: 800;
-      padding: 4px 9px;
-      border-radius: 999px;
-      background: rgba(59, 130, 246, 0.18);
-      color: #93c5fd;
-    }
-
-    .badge.live {
-      background: rgba(16, 185, 129, 0.18);
-      color: #6ee7b7;
-    }
-
-    .badge.pending {
-      background: rgba(245, 158, 11, 0.18);
-      color: #fcd34d;
-    }
-
-    .badge.rejected {
-      background: rgba(239, 68, 68, 0.18);
-      color: #fca5a5;
-    }
-
-    .tourney-meta {
-      display: grid;
-      grid-template-columns: repeat(3, 1fr);
-      gap: 8px;
-      background: rgba(11, 16, 32, 0.55);
-      padding: 10px;
-      border-radius: 12px;
-      text-align: center;
-    }
-
-    .tourney-meta small {
-      display: block;
-      font-size: 11px;
-      color: var(--muted);
-    }
-
-    .tourney-meta strong {
-      font-size: 13px;
-      color: #f8fafc;
-    }
-
-    .game-layout {
-      display: grid;
-      grid-template-columns: minmax(0, 1fr) 290px;
-      gap: 16px;
-      align-items: start;
-    }
-
-    @media (max-width: 820px) {
-      .game-layout { grid-template-columns: 1fr; }
-    }
-
-    .board-wrap {
-      background: #0f172a;
-      border: 2px solid rgba(255, 255, 255, 0.14);
-      border-radius: 18px;
-      padding: 10px;
-      aspect-ratio: 1 / 1;
-      max-width: 520px;
-      width: 100%;
-      margin: 0 auto;
-    }
-
-    .ludo-board {
-      width: 100%;
-      height: 100%;
-      display: grid;
-      grid-template-columns: repeat(15, 1fr);
-      grid-template-rows: repeat(15, 1fr);
-      background: #ffffff;
-      border-radius: 10px;
-      overflow: hidden;
-      position: relative;
-    }
-
-    .cell {
-      border: 0.5px solid rgba(15, 23, 42, 0.16);
-      position: relative;
-      display: flex;
-      align-items: center;
-      justify-content: center;
-      font-size: 11px;
-      color: #0f172a;
-    }
-
-    .cell.red-bg { background: #ef4444; }
-    .cell.green-bg { background: #22c55e; }
-    .cell.yellow-bg { background: #eab308; }
-    .cell.blue-bg { background: #3b82f6; }
-    .cell.safe-star::after {
-      content: "★";
-      font-size: 12px;
-      color: rgba(15, 23, 42, 0.55);
-      position: absolute;
-    }
-
-    .home-center {
-      position: absolute;
-      left: 40%;
-      top: 40%;
-      width: 20%;
-      height: 20%;
-      background: conic-gradient(
-        #22c55e 0deg 90deg,
-        #eab308 90deg 180deg,
-        #3b82f6 180deg 270deg,
-        #ef4444 270deg 360deg
-      );
-      border: 2px solid #0f172a;
-      display: grid;
-      place-items: center;
-      z-index: 4;
-    }
-
-    .home-center span {
-      background: #0f172a;
-      color: #fff;
-      font-size: 10px;
-      font-weight: 900;
-      padding: 2px 5px;
-      border-radius: 6px;
-    }
-
-    .token {
-      width: 74%;
-      height: 74%;
-      border-radius: 50%;
-      border: 2px solid #ffffff;
-      box-shadow: 0 2px 6px rgba(0, 0, 0, 0.45);
-      position: relative;
-      z-index: 6;
-      cursor: pointer;
-      display: grid;
-      place-items: center;
-      font-size: 9px;
-      font-weight: 900;
-      color: #fff;
-      transition: transform 0.15s ease;
-    }
-
-    .token.red { background: radial-gradient(circle at 30% 30%, #f87171, #b91c1c); }
-    .token.yellow { background: radial-gradient(circle at 30% 30%, #fde047, #ca8a04); color: #111827; }
-    .token.movable {
-      animation: pulseToken 0.8s infinite alternate;
-      outline: 3px solid #111827;
-      z-index: 9;
-    }
-
-    @keyframes pulseToken {
-      from { transform: scale(1); }
-      to { transform: scale(1.18); }
-    }
-
-    .dice-box {
-      display: flex;
-      align-items: center;
-      justify-content: space-between;
-      gap: 12px;
-      background: var(--card-2);
-      border: 1px solid var(--border);
-      padding: 12px;
-      border-radius: 14px;
-      margin-bottom: 12px;
-    }
-
-    .dice {
-      width: 54px;
-      height: 54px;
-      border-radius: 14px;
-      background: #fff;
-      color: #0f172a;
-      font-size: 26px;
-      font-weight: 900;
-      display: grid;
-      place-items: center;
-      box-shadow: 0 6px 14px rgba(0, 0, 0, 0.35);
-    }
-
-    .log-box {
-      max-height: 170px;
-      overflow-y: auto;
-      background: rgba(11, 16, 32, 0.65);
-      border: 1px solid var(--border);
-      border-radius: 12px;
-      padding: 10px;
-      font-size: 12px;
-      display: flex;
-      flex-direction: column;
-      gap: 6px;
-    }
-
-    .form-group {
-      margin-bottom: 12px;
-    }
-
-    .form-group label {
-      display: block;
-      font-size: 12px;
-      color: var(--muted);
-      margin-bottom: 6px;
-      font-weight: 700;
-    }
-
-    .form-control {
-      width: 100%;
-      background: var(--card-2);
-      border: 1px solid var(--border);
-      color: var(--text);
-      padding: 10px 12px;
-      border-radius: 12px;
-      font-size: 13px;
-      outline: none;
-    }
-
-    .form-control:focus {
-      border-color: var(--accent);
-    }
-
-    .number-box {
-      display: flex;
-      align-items: center;
-      justify-content: space-between;
-      gap: 10px;
-      background: rgba(245, 158, 11, 0.12);
-      border: 1px dashed rgba(245, 158, 11, 0.5);
-      padding: 12px;
-      border-radius: 12px;
-      margin-bottom: 12px;
-    }
-
-    .number-box strong {
-      font-size: 17px;
-      letter-spacing: 0.5px;
-      color: #fbbf24;
-    }
-
-    .tx-item {
-      display: flex;
-      justify-content: space-between;
-      align-items: center;
-      gap: 10px;
-      padding: 11px 12px;
-      background: var(--card-2);
-      border: 1px solid var(--border);
-      border-radius: 12px;
-      margin-bottom: 8px;
-      font-size: 13px;
-    }
-
-    .tx-item small {
-      display: block;
-      color: var(--muted);
-      font-size: 11px;
-      margin-top: 2px;
-    }
-
-    .account-row {
-      display: flex;
-      align-items: center;
-      justify-content: space-between;
-      gap: 10px;
-      padding: 10px 12px;
-      background: var(--card-2);
-      border: 1px solid var(--border);
-      border-radius: 12px;
-      margin-bottom: 8px;
-      flex-wrap: wrap;
+    .card-box { background: var(--card); border: 1px solid #334155; border-radius: 14px; padding: 16px; margin-bottom: 14px; }
+    .logout-btn {
+      width: 100%; padding: 12px; border: 1px solid var(--danger); background: rgba(239,68,68,0.1);
+      color: var(--danger); border-radius: 10px; font-weight: 700; cursor: pointer; margin-top: 10px;
     }
 
     .bottom-nav {
-      display: none;
-      position: fixed;
-      bottom: 0;
-      left: 0;
-      right: 0;
-      background: rgba(11, 16, 32, 0.96);
-      backdrop-filter: blur(14px);
-      border-top: 1px solid var(--border);
-      padding: 6px 4px;
-      z-index: 40;
-      justify-content: space-around;
+      position: fixed; bottom: 0; left: 0; right: 0; background: #1e293b;
+      border-top: 1px solid #334155; display: grid; grid-template-columns: repeat(3, 1fr);
+      padding: 8px 0; z-index: 20;
     }
-
-    @media (max-width: 720px) {
-      .bottom-nav { display: flex; }
+    .nav-item {
+      background: none; border: none; color: var(--muted); font-size: 12px;
+      display: flex; flex-direction: column; align-items: center; gap: 4px; cursor: pointer;
     }
-
-    .b-nav-btn {
-      background: none;
-      border: none;
-      color: var(--muted);
-      display: flex;
-      flex-direction: column;
-      align-items: center;
-      gap: 3px;
-      font-size: 10px;
-      font-weight: 700;
-      cursor: pointer;
-      padding: 4px 6px;
-      border-radius: 10px;
-    }
-
-    .b-nav-btn.active {
-      color: #fbbf24;
-    }
-
-    .toast {
-      position: fixed;
-      top: 76px;
-      right: 16px;
-      background: #0f172a;
-      color: #fff;
-      border: 1px solid rgba(245, 158, 11, 0.5);
-      padding: 11px 15px;
-      border-radius: 12px;
-      font-size: 13px;
-      font-weight: 700;
-      z-index: 99;
-      box-shadow: 0 10px 25px rgba(0, 0, 0, 0.45);
-      opacity: 0;
-      transform: translateY(-8px);
-      transition: 0.2s ease;
-      pointer-events: none;
-      max-width: 320px;
-    }
-
-    .toast.show {
-      opacity: 1;
-      transform: translateY(0);
-    }
+    .nav-item.active { color: var(--primary); font-weight: 700; }
+    .tab-page { display: none; }
+    .tab-page.active { display: block; }
   </style>
 </head>
 <body>
-  <div class="app-shell">
-    <header class="topbar">
-      <div class="brand">
+
+  <!-- সাইন ইন ও সাইন আপ স্ক্রিন -->
+  <div id="auth-screen">
+    <div class="auth-box">
+      <div class="brand-header">
         <div class="brand-logo">🎲</div>
-        <div>
-          <h1>লুডু টুর্নামেন্ট প্রো</h1>
-          <span id="headerPlayerMeta">প্লেয়ার আইডি: PL-1001</span>
+        <h1>Ludo Tournament Pro</h1>
+        <p>খেলুন এবং প্রতিদিন জিতে নিন আকর্ষণীয় পুরস্কার</p>
+      </div>
+
+      <div class="auth-tabs">
+        <button class="auth-tab active" id="tab-signin" onclick="switchAuth('signin')">সাইন ইন (Sign In)</button>
+        <button class="auth-tab" id="tab-signup" onclick="switchAuth('signup')">সাইন আপ (Sign Up)</button>
+      </div>
+
+      <!-- Sign In Form -->
+      <form id="signin-form" onsubmit="handleSignIn(event)">
+        <div class="form-group">
+          <label>মোবাইল নম্বর বা ইউজারনেম</label>
+          <input type="text" id="signin-user" placeholder="আপনার মোবাইল নম্বর লিখুন" required />
+        </div>
+        <div class="form-group">
+          <label>পাসওয়ার্ড</label>
+          <input type="password" id="signin-pass" placeholder="পাসওয়ার্ড লিখুন" required />
+        </div>
+        <button type="submit" class="btn-primary">সাইন ইন করুন</button>
+      </form>
+
+      <!-- Sign Up Form -->
+      <form id="signup-form" style="display:none;" onsubmit="handleSignUp(event)">
+        <div class="form-group">
+          <label>আপনার পূর্ণ নাম (Ludo Name)</label>
+          <input type="text" id="signup-name" placeholder="যেমন: Shakib Hasan" required />
+        </div>
+        <div class="form-group">
+          <label>মোবাইল নম্বর</label>
+          <input type="tel" id="signup-phone" placeholder="01XXXXXXXXX" required />
+        </div>
+        <div class="form-group">
+          <label>নতুন পাসওয়ার্ড</label>
+          <input type="password" id="signup-pass" placeholder="কমপক্ষে ৪ সংখ্যার পাসওয়ার্ড" minlength="4" required />
+        </div>
+        <button type="submit" class="btn-primary">নতুন একাউন্ট তৈরি করুন</button>
+      </form>
+
+      <div class="auth-msg" id="auth-msg"></div>
+    </div>
+  </div>
+
+  <!-- মূল অ্যাপ স্ক্রিন -->
+  <div id="app-screen">
+    <div class="topbar">
+      <div class="user-info">
+        <h2 id="display-name">Player</h2>
+        <span id="display-phone">01700000000</span>
+      </div>
+      <div class="wallet-pill">৳ <span id="display-balance">50</span></div>
+    </div>
+
+    <div class="container">
+      <!-- টুর্নামেন্ট ট্যাব -->
+      <div id="page-home" class="tab-page active">
+        <div class="notice-bar">📢 ম্যাচ শুরুর ১০ মিনিট আগে রুম আইডি ও পাসওয়ার্ড দেওয়া হবে।</div>
+        <div class="section-title"><span>চলমান লুডু টুর্নামেন্ট</span></div>
+        <div id="match-list"></div>
+      </div>
+
+      <!-- ওয়ালেট ট্যাব -->
+      <div id="page-wallet" class="tab-page">
+        <div class="card-box">
+          <h3>আমার ওয়ালেট ব্যালেন্স</h3>
+          <p style="font-size:28px; font-weight:800; color:var(--primary); margin:10px 0;">৳ <span id="wallet-balance">50</span></p>
+          <p style="font-size:13px; color:var(--muted);">বিকাশ বা নগদের মাধ্যমে টাকা অ্যাড ও উইথড্র করতে অ্যাডমিনের সাথে যোগাযোগ করুন।</p>
         </div>
       </div>
-      <div class="top-actions">
-        <button class="pill install-btn" id="topInstallBtn" style="display:none;" onclick="triggerInstall()">📲 অ্যাপ ইনস্টল</button>
-        <div class="pill balance" id="headerBalance">৳০.০০</div>
-        <button class="pill" onclick="switchTab('playerid')">🆔 প্লেয়ার ID</button>
-      </div>
-    </header>
 
-    <div class="install-banner" id="installBanner">
-      <div>
-        <strong>📱 মোবাইলে অ্যাপ হিসেবে ইনস্টল করুন</strong>
-        <p id="installHintText">হোম স্ক্রিনে আইকন যুক্ত করে ফুল-স্ক্রিন অ্যাপের মতো খেলুন।</p>
-      </div>
-      <div style="display:flex; gap:8px;">
-        <button class="btn btn-success btn-sm" id="bannerInstallBtn" onclick="triggerInstall()">ইনস্টল করুন</button>
-        <button class="btn btn-secondary btn-sm" onclick="dismissInstallBanner()">পরে</button>
+      <!-- প্রোফাইল ট্যাব -->
+      <div id="page-profile" class="tab-page">
+        <div class="card-box">
+          <h3 style="margin-bottom:10px;">প্রোফাইল তথ্য</h3>
+          <p style="font-size:14px; margin-bottom:6px;">নাম: <strong id="prof-name"></strong></p>
+          <p style="font-size:14px; margin-bottom:6px;">মোবাইল: <strong id="prof-phone"></strong></p>
+          <button class="logout-btn" onclick="logoutUser()">লগআউট (Sign Out)</button>
+        </div>
       </div>
     </div>
 
-    <nav class="desktop-nav">
-      <button class="nav-btn active" data-tab="home" onclick="switchTab('home')">🏆 টুর্নামেন্ট</button>
-      <button class="nav-btn" data-tab="game" onclick="switchTab('game')">🎲 গেম বোর্ড</button>
-      <button class="nav-btn" data-tab="deposit" onclick="switchTab('deposit')">💳 ডিপোজিট</button>
-      <button class="nav-btn" data-tab="withdraw" onclick="switchTab('withdraw')">💸 উইথড্র</button>
-      <button class="nav-btn" data-tab="history" onclick="switchTab('history')">📜 হিস্ট্রি</button>
-      <button class="nav-btn" data-tab="playerid" onclick="switchTab('playerid')">🆔 প্লেয়ার ID ও অ্যাকাউন্ট</button>
-    </nav>
-
-    <section class="section active" id="sec-home">
-      <div class="hero-wallet">
-        <div>
-          <div style="font-size:12px; color:#cbd5e1;">বর্তমান ওয়ালেট ব্যালেন্স</div>
-          <div class="amount" id="heroBalance">৳০.০০</div>
-          <div style="font-size:13px; color:#e2e8f0;" id="heroPlayerName">খেলোয়াড়: অতিথি প্লেয়ার</div>
-          <div class="id-badge" id="heroPlayerIdBadge">🆔 Player ID: PL-1001</div>
-        </div>
-        <div style="display:flex; gap:8px; flex-wrap:wrap;">
-          <button class="btn btn-success" onclick="switchTab('deposit')">+ ডিপোজিট</button>
-          <button class="btn btn-secondary" onclick="switchTab('withdraw')">উইথড্র</button>
-          <button class="btn btn-primary" onclick="switchTab('playerid')">+ নতুন প্লেয়ার ID</button>
-        </div>
-      </div>
-
-      <div class="card">
-        <div class="card-title">
-          <span>চলমান টুর্নামেন্টসমূহ</span>
-          <div style="display:flex; gap:6px; flex-wrap:wrap;">
-            <button class="btn btn-sm btn-secondary" onclick="setFilter('all')">সব</button>
-            <button class="btn btn-sm btn-secondary" onclick="setFilter('1v1')">১ বনাম ১</button>
-            <button class="btn btn-sm btn-secondary" onclick="setFilter('4p')">৪ প্লেয়ার</button>
-          </div>
-        </div>
-        <div class="grid-2" id="tournamentList"></div>
-      </div>
-    </section>
-
-    <section class="section" id="sec-game">
-      <div class="game-layout">
-        <div class="card" style="margin-bottom:0;">
-          <div class="card-title">
-            <span id="activeMatchTitle">ফ্রি প্র্যাকটিস ম্যাচ</span>
-            <span class="badge live" id="matchPrizeBadge">প্রাইজ: ৳০</span>
-          </div>
-          <div class="board-wrap">
-            <div class="ludo-board" id="ludoBoard">
-              <div class="home-center"><span>WIN</span></div>
-            </div>
-          </div>
-        </div>
-
-        <div class="card" style="margin-bottom:0;">
-          <div class="card-title"><span>ম্যাচ কন্ট্রোল</span></div>
-          <div class="dice-box">
-            <div>
-              <div style="font-size:11px; color:var(--muted);" id="turnLabel">আপনার দান (লাল)</div>
-              <div style="font-size:13px; font-weight:700; margin-top:2px;" id="diceStatus">ছক্কা চালুন</div>
-            </div>
-            <div class="dice" id="diceValue">🎲</div>
-          </div>
-
-          <div style="display:flex; gap:8px; margin-bottom:12px;">
-            <button class="btn btn-primary" style="flex:1;" id="rollBtn" onclick="rollDice()">🎲 ছক্কা চালুন</button>
-            <button class="btn btn-secondary" onclick="resetMatch(false)">নতুন বোর্ড</button>
-          </div>
-
-          <div style="font-size:12px; color:var(--muted); margin-bottom:6px; font-weight:700;">ম্যাচ লগ</div>
-          <div class="log-box" id="gameLog"></div>
-        </div>
-      </div>
-    </section>
-
-    <section class="section" id="sec-deposit">
-      <div class="grid-2">
-        <div class="card">
-          <div class="card-title"><span>টাকা ডিপোজিট করুন</span></div>
-          <div class="number-box">
-            <div>
-              <small style="color:#cbd5e1; font-size:11px; display:block;">অফিসিয়াল এজেন্ট/পার্সোনাল নাম্বার</small>
-              <strong id="depositAgentNumber">01867053532</strong>
-            </div>
-            <button class="btn btn-sm btn-primary" onclick="copyDepositNumber()">📋 কপি</button>
-          </div>
-
-          <form onsubmit="submitDeposit(event)">
-            <div class="form-group">
-              <label>পেমেন্ট মেথড</label>
-              <select class="form-control" id="depMethod">
-                <option value="বিকাশ">বিকাশ (bKash)</option>
-                <option value="নগদ">নগদ (Nagad)</option>
-                <option value="রকেট">রকেট (Rocket)</option>
-              </select>
-            </div>
-            <div class="form-group">
-              <label>যে নাম্বার থেকে টাকা পাঠিয়েছেন</label>
-              <input type="text" class="form-control" id="depSender" placeholder="01XXXXXXXXX" required />
-            </div>
-            <div class="form-group">
-              <label>ট্রানজেকশন আইডি (TrxID)</label>
-              <input type="text" class="form-control" id="depTrx" placeholder="যেমন: 9X7K2L1M" required />
-            </div>
-            <div class="form-group">
-              <label>টাকার পরিমাণ (৳)</label>
-              <input type="number" class="form-control" id="depAmount" min="20" placeholder="সর্বনিম্ন ৳২০" required />
-            </div>
-            <button type="submit" class="btn btn-success" style="width:100%;">ডিপোজিট রিকোয়েস্ট পাঠান</button>
-          </form>
-        </div>
-
-        <div class="card">
-          <div class="card-title"><span>ডিপোজিট নির্দেশিকা</span></div>
-          <div style="font-size:13px; line-height:1.7; color:#cbd5e1;">
-            <p>১. উপরে দেওয়া <strong>01867053532</strong> নাম্বারে বিকাশ, নগদ বা রকেটে Send Money করুন।</p>
-            <p>২. আপনার <strong>Player ID</strong> (<span id="depPlayerIdText">PL-1001</span>) ঠিক আছে কি না যাচাই করুন।</p>
-            <p>৩. যে নাম্বার থেকে টাকা পাঠিয়েছেন, TrxID এবং টাকার পরিমাণ লিখে ফর্ম সাবমিট করুন।</p>
-            <p>৪. অনুমোদনের পর আপনার ওয়ালেট ব্যালেন্স আপডেট হয়ে যাবে।</p>
-          </div>
-        </div>
-      </div>
-    </section>
-
-    <section class="section" id="sec-withdraw">
-      <div class="grid-2">
-        <div class="card">
-          <div class="card-title"><span>টাকা উত্তোলন (উইথড্র)</span></div>
-          <form onsubmit="submitWithdraw(event)">
-            <div class="form-group">
-              <label>উত্তোলন মেথড</label>
-              <select class="form-control" id="wdMethod">
-                <option value="বিকাশ">বিকাশ (bKash)</option>
-                <option value="নগদ">নগদ (Nagad)</option>
-                <option value="রকেট">রকেট (Rocket)</option>
-              </select>
-            </div>
-            <div class="form-group">
-              <label>আপনার পার্সোনাল একাউন্ট নাম্বার</label>
-              <input type="text" class="form-control" id="wdAccount" placeholder="01XXXXXXXXX" required />
-            </div>
-            <div class="form-group">
-              <label>টাকার পরিমাণ (৳)</label>
-              <input type="number" class="form-control" id="wdAmount" min="50" placeholder="সর্বনিম্ন ৳৫০" required />
-            </div>
-            <button type="submit" class="btn btn-primary" style="width:100%;">উইথড্র রিকোয়েস্ট পাঠান</button>
-          </form>
-        </div>
-
-        <div class="card">
-          <div class="card-title"><span>উইথড্র তথ্য</span></div>
-          <div style="font-size:13px; line-height:1.7; color:#cbd5e1;">
-            <p>• বর্তমান ব্যালেন্স: <strong id="wdCurrentBal">৳০.০০</strong></p>
-            <p>• প্লেয়ার আইডি: <strong id="wdPlayerIdText">PL-1001</strong></p>
-            <p>• রিকোয়েস্ট পাঠালে ব্যালেন্স থেকে টাকা হোল্ড/কেটে নেওয়া হয় এবং এডমিন প্রসেস করে।</p>
-          </div>
-        </div>
-      </div>
-    </section>
-
-    <section class="section" id="sec-history">
-      <div class="card">
-        <div class="card-title">
-          <span>লেনদেন ও ম্যাচ হিস্ট্রি</span>
-          <span style="font-size:12px; color:var(--muted);" id="historyIdLabel">PL-1001</span>
-        </div>
-        <div id="historyList"></div>
-      </div>
-    </section>
-
-    <section class="section" id="sec-playerid">
-      <div class="grid-2">
-        <div class="card">
-          <div class="card-title"><span>নতুন প্লেয়ার ID তৈরি করুন</span></div>
-          <form onsubmit="createNewPlayerAccount(event)">
-            <div class="form-group">
-              <label>খেলোয়াড়ের নাম</label>
-              <input type="text" class="form-control" id="newPlayerName" placeholder="যেমন: রাফি আহমেদ" required />
-            </div>
-            <div class="form-group">
-              <label>মোবাইল নাম্বার</label>
-              <input type="text" class="form-control" id="newPlayerPhone" placeholder="01XXXXXXXXX" required />
-            </div>
-            <div class="form-group">
-              <label>কাস্টম প্লেয়ার ID (ঐচ্ছিক — খালি রাখলে অটো তৈরি হবে)</label>
-              <input type="text" class="form-control" id="newCustomPlayerId" placeholder="যেমন: PL-7788" />
-            </div>
-            <button type="submit" class="btn btn-success" style="width:100%;">🆔 নতুন প্লেয়ার ID চালু করুন</button>
-          </form>
-        </div>
-
-        <div class="card">
-          <div class="card-title"><span>সেভ করা প্লেয়ার ID সমূহ</span></div>
-          <div id="savedAccountsList"></div>
-        </div>
-      </div>
-    </section>
+    <div class="bottom-nav">
+      <button class="nav-item active" onclick="switchPage('home', this)"><span>🏆</span><span>টুর্নামেন্ট</span></button>
+      <button class="nav-item" onclick="switchPage('wallet', this)"><span>💳</span><span>ওয়ালেট</span></button>
+      <button class="nav-item" onclick="switchPage('profile', this)"><span>👤</span><span>প্রোফাইল</span></button>
+    </div>
   </div>
 
-  <nav class="bottom-nav">
-    <button class="b-nav-btn active" data-tab="home" onclick="switchTab('home')">🏆<span>টুর্নামেন্ট</span></button>
-    <button class="b-nav-btn" data-tab="game" onclick="switchTab('game')">🎲<span>গেম</span></button>
-    <button class="b-nav-btn" data-tab="deposit" onclick="switchTab('deposit')">💳<span>ডিপোজিট</span></button>
-    <button class="b-nav-btn" data-tab="withdraw" onclick="switchTab('withdraw')">💸<span>উইথড্র</span></button>
-    <button class="b-nav-btn" data-tab="playerid" onclick="switchTab('playerid')">🆔<span>প্লেয়ার ID</span></button>
-  </nav>
-
-  <div class="toast" id="toast"></div>
-
   <script>
-    const STORAGE_KEYS = {
-      players: 'ludo_app_players_v1',
-      activeId: 'ludo_app_active_player_v1',
-      tournaments: 'ludo_app_tournaments_v1',
-      settings: 'ludo_app_settings_v1',
-      tx: 'ludo_app_transactions_v1'
-    };
-
-    const DEFAULT_TOURNAMENTS = [
-      { id: 'T1', title: 'ফাস্ট ডুয়েল কাপ #১০১', mode: '1v1', entry: 20, prize: 35, slots: '১/২ জয়েন' },
-      { id: 'T2', title: 'প্রো ১ বনাম ১ চ্যালেঞ্জ', mode: '1v1', entry: 50, prize: 90, slots: '০/২ জয়েন' },
-      { id: 'T3', title: 'গ্র্যান্ড ৪-প্লেয়ার রয়্যাল', mode: '4p', entry: 30, prize: 100, slots: '২/৪ জয়েন' },
-      { id: 'T4', title: 'নাইট মাস্টার্স টুর্নামেন্ট', mode: '4p', entry: 100, prize: 360, slots: '১/৪ জয়েন' }
+    const defaultMatches = [
+      { id: 1, title: "Classic 1v1 Battle #101", type: "1v1 Classic", entry: 20, prize: 35, time: "আজ রাত ৮:৩০" },
+      { id: 2, title: "Mega 4-Player Ludo #102", type: "4 Players", entry: 30, prize: 100, time: "আজ রাত ৯:৩০" },
+      { id: 3, title: "Quick Mode 1v1 #103", type: "Quick Mode", entry: 50, prize: 90, time: "আজ রাত ১০:৩০" }
     ];
 
-    const DEFAULT_PLAYERS = {
-      'PL-1001': {
-        playerId: 'PL-1001',
-        name: 'আরিফ হোসেন',
-        phone: '01700000001',
-        balance: 150,
-        wins: 0
-      }
-    };
-
-    function loadJSON(key, fallback) {
-      try {
-        const raw = localStorage.getItem(key);
-        return raw ? JSON.parse(raw) : fallback;
-      } catch {
-        return fallback;
+    function switchAuth(mode) {
+      document.getElementById('auth-msg').textContent = '';
+      if (mode === 'signin') {
+        document.getElementById('tab-signin').classList.add('active');
+        document.getElementById('tab-signup').classList.remove('active');
+        document.getElementById('signin-form').style.display = 'block';
+        document.getElementById('signup-form').style.display = 'none';
+      } else {
+        document.getElementById('tab-signup').classList.add('active');
+        document.getElementById('tab-signin').classList.remove('active');
+        document.getElementById('signup-form').style.display = 'block';
+        document.getElementById('signin-form').style.display = 'none';
       }
     }
 
-    function saveJSON(key, val) {
-      localStorage.setItem(key, JSON.stringify(val));
-    }
-
-    let state = {
-      players: loadJSON(STORAGE_KEYS.players, DEFAULT_PLAYERS),
-      activeId: localStorage.getItem(STORAGE_KEYS.activeId) || 'PL-1001',
-      tournaments: loadJSON(STORAGE_KEYS.tournaments, DEFAULT_TOURNAMENTS),
-      settings: loadJSON(STORAGE_KEYS.settings, { depositNumber: '01867053532' }),
-      transactions: loadJSON(STORAGE_KEYS.tx, []),
-      filter: 'all',
-      activeMatch: { title: 'ফ্রি প্র্যাকটিস ম্যাচ', prize: 0 }
-    };
-
-    if (!state.players[state.activeId]) {
-      const firstId = Object.keys(state.players)[0] || 'PL-1001';
-      if (!state.players[firstId]) state.players[firstId] = { ...DEFAULT_PLAYERS['PL-1001'] };
-      state.activeId = firstId;
-    }
-
-    function persistAll() {
-      saveJSON(STORAGE_KEYS.players, state.players);
-      localStorage.setItem(STORAGE_KEYS.activeId, state.activeId);
-      saveJSON(STORAGE_KEYS.tournaments, state.tournaments);
-      saveJSON(STORAGE_KEYS.settings, state.settings);
-      saveJSON(STORAGE_KEYS.tx, state.transactions);
-    }
-
-    function getCurrentPlayer() {
-      return state.players[state.activeId];
-    }
-
-    function formatBDT(amount) {
-      return '৳' + Number(amount || 0).toLocaleString('bn-BD', { minimumFractionDigits: 2, maximumFractionDigits: 2 });
-    }
-
-    function showToast(msg) {
-      const el = document.getElementById('toast');
-      el.textContent = msg;
-      el.classList.add('show');
-      clearTimeout(window.__toastTimer);
-      window.__toastTimer = setTimeout(() => el.classList.remove('show'), 2800);
-    }
-
-    function switchTab(tab) {
-      document.querySelectorAll('.section').forEach(s => s.classList.remove('active'));
-      document.getElementById('sec-' + tab).classList.add('active');
-      document.querySelectorAll('.nav-btn, .b-nav-btn').forEach(btn => {
-        btn.classList.toggle('active', btn.dataset.tab === tab);
-      });
-      renderAll();
-    }
-
-    function setFilter(f) {
-      state.filter = f;
-      renderTournaments();
-    }
-
-    function generateUniquePlayerId(customVal) {
-      if (customVal) {
-        const clean = customVal.trim().toUpperCase().replace(/\s+/g, '-');
-        const formatted = clean.startsWith('PL-') ? clean : 'PL-' + clean;
-        if (!state.players[formatted]) return formatted;
-      }
-      let id;
-      do {
-        const num = Math.floor(1000 + Math.random() * 9000);
-        id = 'PL-' + num;
-      } while (state.players[id]);
-      return id;
-    }
-
-    function createNewPlayerAccount(e) {
+    function handleSignUp(e) {
       e.preventDefault();
-      const name = document.getElementById('newPlayerName').value.trim();
-      const phone = document.getElementById('newPlayerPhone').value.trim();
-      const customId = document.getElementById('newCustomPlayerId').value.trim();
-      if (!name || !phone) return;
+      const name = document.getElementById('signup-name').value.trim();
+      const phone = document.getElementById('signup-phone').value.trim();
+      const pass = document.getElementById('signup-pass').value.trim();
 
-      const playerId = generateUniquePlayerId(customId);
-      state.players[playerId] = {
-        playerId,
-        name,
-        phone,
-        balance: 50,
-        wins: 0
-      };
-      state.activeId = playerId;
-      state.transactions.unshift({
-        id: 'TX-' + Date.now(),
-        playerId,
-        type: 'বোনাস',
-        detail: 'নতুন প্লেয়ার ID ওয়েলকাম বোনাস',
-        amount: 50,
-        status: 'সফল',
-        time: new Date().toLocaleString('bn-BD')
-      });
-      persistAll();
-      e.target.reset();
-      showToast(`নতুন আইডি ${playerId} তৈরি হয়েছে (৳৫০ বোনাস যুক্ত)`);
-      renderAll();
-    }
-
-    function selectPlayerAccount(playerId) {
-      if (!state.players[playerId]) return;
-      state.activeId = playerId;
-      persistAll();
-      showToast(`প্লেয়ার আইডি ${playerId} চালু করা হয়েছে`);
-      renderAll();
-    }
-
-    function copyDepositNumber() {
-      const num = state.settings.depositNumber || '01867053532';
-      navigator.clipboard?.writeText(num).catch(() => {});
-      showToast(`নাম্বার কপি হয়েছে: ${num}`);
-    }
-
-    function joinTournament(tId) {
-      const t = state.tournaments.find(x => x.id === tId);
-      const p = getCurrentPlayer();
-      if (!t || !p) return;
-
-      if (p.balance < t.entry) {
-        showToast('পর্যাপ্ত ব্যালেন্স নেই! অনুগ্রহ করে ডিপোজিট করুন।');
-        switchTab('deposit');
+      const users = JSON.parse(localStorage.getItem('ludo_users') || '[]');
+      if (users.find(u => u.phone === phone)) {
+        document.getElementById('auth-msg').textContent = 'এই মোবাইল নম্বর দিয়ে আগেই একাউন্ট খোলা আছে!';
         return;
       }
 
-      p.balance -= t.entry;
-      state.activeMatch = { title: t.title, prize: t.prize };
-      state.transactions.unshift({
-        id: 'TX-' + Date.now(),
-        playerId: p.playerId,
-        type: 'এন্ট্রি ফি',
-        detail: `${t.title} (${t.mode === '1v1' ? '১ বনাম ১' : '৪ প্লেয়ার'})`,
-        amount: -t.entry,
-        status: 'সফল',
-        time: new Date().toLocaleString('bn-BD')
-      });
-      persistAll();
-      resetMatch(true);
-      switchTab('game');
-      showToast(`${t.title}-এ জয়েন করেছেন! প্রাইজ: ৳${t.prize}`);
+      const newUser = { name, phone, pass, balance: 50, joined: [] };
+      users.push(newUser);
+      localStorage.setItem('ludo_users', JSON.stringify(users));
+      localStorage.setItem('ludo_current_user', JSON.stringify(newUser));
+      loadApp();
     }
 
-    function submitDeposit(e) {
+    function handleSignIn(e) {
       e.preventDefault();
-      const p = getCurrentPlayer();
-      const method = document.getElementById('depMethod').value;
-      const sender = document.getElementById('depSender').value.trim();
-      const trx = document.getElementById('depTrx').value.trim();
-      const amount = Number(document.getElementById('depAmount').value);
-      if (!amount || amount < 20) return;
+      const userInp = document.getElementById('signin-user').value.trim();
+      const passInp = document.getElementById('signin-pass').value.trim();
 
-      state.transactions.unshift({
-        id: 'DEP-' + Date.now(),
-        playerId: p.playerId,
-        type: 'ডিপোজিট',
-        detail: `${method} থেকে ${sender} | TrxID: ${trx}`,
-        amount,
-        status: 'পেন্ডিং',
-        time: new Date().toLocaleString('bn-BD')
-      });
-      persistAll();
-      e.target.reset();
-      showToast('ডিপোজিট রিকোয়েস্ট জমা হয়েছে');
-      switchTab('history');
-    }
+      const users = JSON.parse(localStorage.getItem('ludo_users') || '[]');
+      const found = users.find(u => (u.phone === userInp || u.name === userInp) && u.pass === passInp);
 
-    function submitWithdraw(e) {
-      e.preventDefault();
-      const p = getCurrentPlayer();
-      const method = document.getElementById('wdMethod').value;
-      const account = document.getElementById('wdAccount').value.trim();
-      const amount = Number(document.getElementById('wdAmount').value);
-      if (!amount || amount < 50) return;
-
-      if (p.balance < amount) {
-        showToast('উইথড্র করার মতো পর্যাপ্ত ব্যালেন্স নেই');
+      if (!found) {
+        document.getElementById('auth-msg').textContent = 'মোবাইল নম্বর বা পাসওয়ার্ড ভুল হয়েছে!';
         return;
       }
 
-      p.balance -= amount;
-      state.transactions.unshift({
-        id: 'WD-' + Date.now(),
-        playerId: p.playerId,
-        type: 'উইথড্র',
-        detail: `${method} একাউন্ট: ${account}`,
-        amount: -amount,
-        status: 'পেন্ডিং',
-        time: new Date().toLocaleString('bn-BD')
-      });
-      persistAll();
-      e.target.reset();
-      showToast('উইথড্র রিকোয়েস্ট পাঠানো হয়েছে');
-      switchTab('history');
+      localStorage.setItem('ludo_current_user', JSON.stringify(found));
+      loadApp();
     }
 
-    const TRACK_COORDS = [
-      [6,1],[6,2],[6,3],[6,4],[6,5],
-      [5,6],[4,6],[3,6],[2,6],[1,6],[0,6],
-      [0,7],[0,8],
-      [1,8],[2,8],[3,8],[4,8],[5,8],
-      [6,9],[6,10],[6,11],[6,12],[6,13],[6,14],
-      [7,14],[8,14],
-      [8,13],[8,12],[8,11],[8,10],[8,9],
-      [9,8],[10,8],[11,8],[12,8],[13,8],[14,8],
-      [14,7],[14,6],
-      [13,6],[12,6],[11,6],[10,6],[9,6],
-      [8,5],[8,4],[8,3],[8,2],[8,1],[8,0],
-      [7,0],[6,0]
-    ];
-
-    const SAFE_INDICES = new Set([0, 8, 13, 21, 26, 34, 39, 47]);
-    const RED_BASE_COORDS = [[2,2],[2,3],[3,2],[3,3]];
-    const YELLOW_BASE_COORDS = [[11,11],[11,12],[12,11],[12,12]];
-    const RED_HOME_STRETCH = [[7,1],[7,2],[7,3],[7,4],[7,5],[7,6]];
-    const YELLOW_HOME_STRETCH = [[7,13],[7,12],[7,11],[7,10],[7,9],[7,8]];
-
-    let game = {
-      red: [-1, -1, -1, -1],
-      yellow: [-1, -1, -1, -1],
-      turn: 'red',
-      dice: null,
-      rolled: false,
-      finished: false,
-      logs: []
-    };
-
-    function addLog(text) {
-      game.logs.unshift(text);
-      if (game.logs.length > 25) game.logs.pop();
-      const box = document.getElementById('gameLog');
-      if (box) {
-        box.innerHTML = game.logs.map(l => `<div>• ${l}</div>`).join('');
-      }
-    }
-
-    function resetMatch(silent) {
-      game = {
-        red: [-1, -1, -1, -1],
-        yellow: [-1, -1, -1, -1],
-        turn: 'red',
-        dice: null,
-        rolled: false,
-        finished: false,
-        logs: []
-      };
-      document.getElementById('diceValue').textContent = '🎲';
-      document.getElementById('turnLabel').textContent = 'আপনার দান (লাল)';
-      document.getElementById('diceStatus').textContent = 'ছক্কা চালুন';
-      document.getElementById('rollBtn').disabled = false;
-      addLog('নতুন ম্যাচ শুরু হয়েছে! ছক্কা চালুন।');
-      renderBoard();
-      if (!silent) showToast('নতুন লুডু বোর্ড প্রস্তুত');
-    }
-
-    function getTokenCoord(color, idx, stepVal) {
-      if (stepVal === -1) {
-        return color === 'red' ? RED_BASE_COORDS[idx] : YELLOW_BASE_COORDS[idx];
-      }
-      if (stepVal >= 57) {
-        return [7, 7];
-      }
-      if (color === 'red') {
-        if (stepVal <= 50) return TRACK_COORDS[stepVal];
-        return RED_HOME_STRETCH[stepVal - 51];
-      } else {
-        if (stepVal <= 50) return TRACK_COORDS[(stepVal + 26) % 52];
-        return YELLOW_HOME_STRETCH[stepVal - 51];
-      }
-    }
-
-    function getGlobalTrackPos(color, stepVal) {
-      if (stepVal < 0 || stepVal > 50) return null;
-      return color === 'red' ? stepVal : (stepVal + 26) % 52;
-    }
-
-    function canMoveToken(color, stepVal, dice) {
-      if (stepVal === 57) return false;
-      if (stepVal === -1) return dice === 6;
-      return stepVal + dice <= 57;
-    }
-
-    function rollDice() {
-      if (game.finished || game.rolled || game.turn !== 'red') return;
-      const val = Math.floor(Math.random() * 6) + 1;
-      game.dice = val;
-      game.rolled = true;
-      document.getElementById('diceValue').textContent = val;
-      addLog(`আপনি ছক্কায় পেয়েছেন: ${val}`);
-
-      const movable = game.red.map((pos, i) => canMoveToken('red', pos, val) ? i : -1).filter(i => i !== -1);
-      if (movable.length === 0) {
-        document.getElementById('diceStatus').textContent = 'চালার মতো গুটি নেই';
-        setTimeout(() => {
-          game.rolled = false;
-          game.turn = 'yellow';
-          renderBoard();
-          botTurn();
-        }, 700);
-      } else {
-        document.getElementById('diceStatus').textContent = 'একটি গুটিতে ক্লিক করুন';
-      }
-      renderBoard();
-    }
-
-    function handleTokenClick(color, idx) {
-      if (game.finished || color !== 'red' || game.turn !== 'red' || !game.rolled) return;
-      const cur = game.red[idx];
-      if (!canMoveToken('red', cur, game.dice)) return;
-
-      const next = cur === -1 ? 0 : cur + game.dice;
-      game.red[idx] = next;
-      addLog(`লাল গুটি #${idx + 1} সামনে এগিয়েছে`);
-
-      const gPos = getGlobalTrackPos('red', next);
-      if (gPos !== null && !SAFE_INDICES.has(gPos)) {
-        game.yellow.forEach((yPos, yIdx) => {
-          const yGlobal = getGlobalTrackPos('yellow', yPos);
-          if (yGlobal === gPos) {
-            game.yellow[yIdx] = -1;
-            addLog(`দারুণ! বটের হলুদ গুটি #${yIdx + 1} কাটা পড়েছে`);
-          }
-        });
-      }
-
-      if (checkWinner()) return;
-
-      const bonusRoll = game.dice === 6;
-      game.rolled = false;
-      if (!bonusRoll) {
-        game.turn = 'yellow';
-        renderBoard();
-        setTimeout(botTurn, 650);
-      } else {
-        document.getElementById('diceStatus').textContent = '৬ ওঠায় আবার ছক্কা চালুন!';
-        renderBoard();
-      }
-    }
-
-    function botTurn() {
-      if (game.finished || game.turn !== 'yellow') return;
-      document.getElementById('turnLabel').textContent = 'বটের দান (হলুদ)';
-      const val = Math.floor(Math.random() * 6) + 1;
-      game.dice = val;
-      document.getElementById('diceValue').textContent = val;
-      addLog(`বট ছক্কায় পেয়েছে: ${val}`);
-
-      const movable = game.yellow.map((pos, i) => canMoveToken('yellow', pos, val) ? i : -1).filter(i => i !== -1);
-      if (movable.length > 0) {
-        const chosen = movable.find(i => game.yellow[i] === -1) ?? movable[0];
-        const next = game.yellow[chosen] === -1 ? 0 : game.yellow[chosen] + val;
-        game.yellow[chosen] = next;
-        addLog(`বটের হলুদ গুটি #${chosen + 1} চালানো হয়েছে`);
-
-        const gPos = getGlobalTrackPos('yellow', next);
-        if (gPos !== null && !SAFE_INDICES.has(gPos)) {
-          game.red.forEach((rPos, rIdx) => {
-            if (getGlobalTrackPos('red', rPos) === gPos) {
-              game.red[rIdx] = -1;
-              addLog(`বট আপনার লাল গুটি #${rIdx + 1} কেটে দিয়েছে!`);
-            }
-          });
-        }
-      }
-
-      if (checkWinner()) return;
-      game.turn = 'red';
-      game.rolled = false;
-      document.getElementById('turnLabel').textContent = 'আপনার দান (লাল)';
-      document.getElementById('diceStatus').textContent = 'ছক্কা চালুন';
-      renderBoard();
-    }
-
-    function checkWinner() {
-      const redDone = game.red.every(p => p === 57);
-      const yellowDone = game.yellow.every(p => p === 57);
-      if (!redDone && !yellowDone) return false;
-
-      game.finished = true;
-      document.getElementById('rollBtn').disabled = true;
-
-      if (redDone) {
-        const prize = Number(state.activeMatch.prize || 0);
-        const p = getCurrentPlayer();
-        p.wins = (p.wins || 0) + 1;
-        if (prize > 0) {
-          p.balance += prize;
-          state.transactions.unshift({
-            id: 'WIN-' + Date.now(),
-            playerId: p.playerId,
-            type: 'প্রাইজ মানি',
-            detail: `${state.activeMatch.title} জয়`,
-            amount: prize,
-            status: 'সফল',
-            time: new Date().toLocaleString('bn-BD')
-          });
-          showToast(`অভিনন্দন! আপনি জিতেছেন এবং ৳${prize} ওয়ালেটে যোগ হয়েছে!`);
-        } else {
-          showToast('অভিনন্দন! আপনি প্র্যাকটিস ম্যাচে জিতেছেন!');
-        }
-        persistAll();
-        renderAll();
-        addLog('🏆 আপনি ম্যাচ জিতেছেন!');
-      } else {
-        addLog('😔 বট এই ম্যাচ জিতেছে। আবার চেষ্টা করুন!');
-        showToast('বট জিতেছে। নতুন বোর্ড দিয়ে আবার খেলুন।');
-      }
-      renderBoard();
-      return true;
-    }
-
-    function renderBoard() {
-      const board = document.getElementById('ludoBoard');
-      if (!board) return;
-      board.querySelectorAll('.cell').forEach(el => el.remove());
-
-      const cellsGrid = Array.from({ length: 15 }, (_, r) =>
-        Array.from({ length: 15 }, (__, c) => {
-          const cell = document.createElement('div');
-          cell.className = 'cell';
-
-          if (r < 6 && c < 6) cell.classList.add('red-bg');
-          else if (r < 6 && c > 8) cell.classList.add('green-bg');
-          else if (r > 8 && c > 8) cell.classList.add('yellow-bg');
-          else if (r > 8 && c < 6) cell.classList.add('blue-bg');
-
-          if (r === 6 && c === 1) cell.classList.add('red-bg');
-          if (r === 1 && c === 8) cell.classList.add('green-bg');
-          if (r === 8 && c === 13) cell.classList.add('yellow-bg');
-          if (r === 13 && c === 6) cell.classList.add('blue-bg');
-
-          if (r === 7 && c >= 1 && c <= 6) cell.classList.add('red-bg');
-          if (c === 7 && r >= 1 && r <= 6) cell.classList.add('green-bg');
-          if (r === 7 && c >= 8 && c <= 13) cell.classList.add('yellow-bg');
-          if (c === 7 && r >= 8 && r <= 13) cell.classList.add('blue-bg');
-
-          TRACK_COORDS.forEach(([tr, tc], idx) => {
-            if (tr === r && tc === c && SAFE_INDICES.has(idx)) {
-              cell.classList.add('safe-star');
-            }
-          });
-
-          board.appendChild(cell);
-          return cell;
-        })
-      );
-
-      ['red', 'yellow'].forEach(color => {
-        game[color].forEach((stepVal, idx) => {
-          const [r, c] = getTokenCoord(color, idx, stepVal);
-          const token = document.createElement('div');
-          token.className = `token ${color}`;
-          token.textContent = idx + 1;
-          if (color === 'red' && game.turn === 'red' && game.rolled && canMoveToken('red', stepVal, game.dice)) {
-            token.classList.add('movable');
-          }
-          token.onclick = (ev) => {
-            ev.stopPropagation();
-            handleTokenClick(color, idx);
-          };
-          cellsGrid[r][c].appendChild(token);
-        });
-      });
-
-      document.getElementById('activeMatchTitle').textContent = state.activeMatch.title;
-      document.getElementById('matchPrizeBadge').textContent = `প্রাইজ: ৳${state.activeMatch.prize}`;
-    }
-
-    function renderTournaments() {
-      const wrap = document.getElementById('tournamentList');
-      const list = state.tournaments.filter(t => state.filter === 'all' || t.mode === state.filter);
-      if (!list.length) {
-        wrap.innerHTML = '<div style="color:var(--muted); font-size:13px;">এই ক্যাটাগরিতে কোনো টুর্নামেন্ট নেই।</div>';
+    function loadApp() {
+      const current = JSON.parse(localStorage.getItem('ludo_current_user'));
+      if (!current) {
+        document.getElementById('auth-screen').style.display = 'flex';
+        document.getElementById('app-screen').style.display = 'none';
         return;
       }
-      wrap.innerHTML = list.map(t => `
-        <div class="tourney-card">
-          <div class="tourney-top">
-            <div>
-              <strong style="font-size:15px;">${t.title}</strong>
-              <div style="font-size:12px; color:var(--muted); margin-top:2px;">${t.mode === '1v1' ? '১ বনাম ১ ম্যাচ' : '৪ প্লেয়ার ম্যাচ'}</div>
-            </div>
-            <span class="badge live">${t.slots}</span>
-          </div>
-          <div class="tourney-meta">
-            <div><small>এন্ট্রি ফি</small><strong>৳${t.entry}</strong></div>
-            <div><small>প্রাইজ পুল</small><strong style="color:#34d399;">৳${t.prize}</strong></div>
-            <div><small>ফরম্যাট</small><strong>${t.mode.toUpperCase()}</strong></div>
-          </div>
-          <button class="btn btn-primary" onclick="joinTournament('${t.id}')">জয়েন করুন (৳${t.entry})</button>
-        </div>
-      `).join('');
+
+      document.getElementById('auth-screen').style.display = 'none';
+      document.getElementById('app-screen').style.display = 'block';
+
+      document.getElementById('display-name').textContent = current.name;
+      document.getElementById('display-phone').textContent = current.phone;
+      document.getElementById('display-balance').textContent = current.balance;
+      document.getElementById('wallet-balance').textContent = current.balance;
+      document.getElementById('prof-name').textContent = current.name;
+      document.getElementById('prof-phone').textContent = current.phone;
+
+      renderMatches(current);
     }
 
-    function renderHistory() {
-      const p = getCurrentPlayer();
-      document.getElementById('historyIdLabel').textContent = p.playerId;
-      const items = state.transactions.filter(tx => tx.playerId === p.playerId);
-      const wrap = document.getElementById('historyList');
-      if (!items.length) {
-        wrap.innerHTML = '<div style="color:var(--muted); font-size:13px;">এই প্লেয়ার আইডিতে এখনো কোনো লেনদেন নেই।</div>';
-        return;
-      }
-      wrap.innerHTML = items.map(tx => {
-        const cls = tx.status === 'পেন্ডিং' ? 'pending' : (tx.status === 'বাতিল' ? 'rejected' : 'live');
-        const amtColor = tx.amount >= 0 ? '#34d399' : '#fca5a5';
-        const sign = tx.amount >= 0 ? '+' : '';
-        return `
-          <div class="tx-item">
-            <div>
-              <strong>${tx.type}</strong>
-              <small>${tx.detail} • ${tx.time}</small>
+    function renderMatches(user) {
+      const savedMatches = JSON.parse(localStorage.getItem('ludo_matches') || 'null') || defaultMatches;
+      const list = document.getElementById('match-list');
+      list.innerHTML = '';
+
+      savedMatches.forEach(m => {
+        const isJoined = (user.joined || []).includes(m.id);
+        list.innerHTML += `
+          <div class="match-card">
+            <div class="match-top">
+              <span class="badge">${m.type}</span>
+              <span style="font-size:12px; color:#94a3b8;">⏰ ${m.time}</span>
             </div>
-            <div style="text-align:right;">
-              <div style="font-weight:800; color:${amtColor};">${sign}৳${Math.abs(tx.amount)}</div>
-              <span class="badge ${cls}" style="margin-top:4px; display:inline-block;">${tx.status}</span>
+            <div class="match-title">${m.title}</div>
+            <div class="match-stats">
+              <div><div class="stat-label">প্রাইজ মানি</div><div class="stat-val" style="color:#10b981;">৳${m.prize}</div></div>
+              <div><div class="stat-label">এন্ট্রি ফি</div><div class="stat-val">৳${m.entry}</div></div>
+              <div><div class="stat-label">বোর্ড</div><div class="stat-val">Ludo King</div></div>
             </div>
+            <button class="join-btn ${isJoined ? 'joined' : ''}" onclick="joinMatch(${m.id}, ${m.entry})">
+              ${isJoined ? '✅ জয়েন সম্পন্ন হয়েছে' : 'ম্যাচে জয়েন করুন (৳' + m.entry + ')'}
+            </button>
           </div>
         `;
-      }).join('');
-    }
-
-    function renderAccountsList() {
-      const wrap = document.getElementById('savedAccountsList');
-      const ids = Object.keys(state.players);
-      wrap.innerHTML = ids.map(id => {
-        const acc = state.players[id];
-        const isCur = id === state.activeId;
-        return `
-          <div class="account-row">
-            <div>
-              <strong>${acc.name}</strong> <span class="badge ${isCur ? 'live' : ''}">${id}</span>
-              <div style="font-size:12px; color:var(--muted); margin-top:2px;">${acc.phone} • ব্যালেন্স: ${formatBDT(acc.balance)}</div>
-            </div>
-            ${isCur
-              ? '<span style="font-size:12px; color:#34d399; font-weight:800;">✓ সক্রিয়</span>'
-              : `<button class="btn btn-sm btn-secondary" onclick="selectPlayerAccount('${id}')">চালু করুন</button>`}
-          </div>
-        `;
-      }).join('');
-    }
-
-    function renderAll() {
-      const p = getCurrentPlayer();
-      document.getElementById('headerPlayerMeta').textContent = `প্লেয়ার আইডি: ${p.playerId}`;
-      document.getElementById('headerBalance').textContent = formatBDT(p.balance);
-      document.getElementById('heroBalance').textContent = formatBDT(p.balance);
-      document.getElementById('heroPlayerName').textContent = `খেলোয়াড়: ${p.name} (${p.phone})`;
-      document.getElementById('heroPlayerIdBadge').textContent = `🆔 Player ID: ${p.playerId}`;
-      document.getElementById('depositAgentNumber').textContent = state.settings.depositNumber || '01867053532';
-      document.getElementById('depPlayerIdText').textContent = p.playerId;
-      document.getElementById('wdPlayerIdText').textContent = p.playerId;
-      document.getElementById('wdCurrentBal').textContent = formatBDT(p.balance);
-
-      renderTournaments();
-      renderHistory();
-      renderAccountsList();
-      renderBoard();
-    }
-
-    let deferredInstallPrompt = null;
-
-    window.addEventListener('beforeinstallprompt', (e) => {
-      e.preventDefault();
-      deferredInstallPrompt = e;
-      document.getElementById('topInstallBtn').style.display = 'inline-flex';
-      if (!sessionStorage.getItem('hide_install_banner')) {
-        document.getElementById('installBanner').classList.add('show');
-      }
-    });
-
-    async function triggerInstall() {
-      if (deferredInstallPrompt) {
-        deferredInstallPrompt.prompt();
-        const choice = await deferredInstallPrompt.userChoice;
-        if (choice.outcome === 'accepted') {
-          showToast('অ্যাপটি আপনার ফোনে ইনস্টল হচ্ছে!');
-        }
-        deferredInstallPrompt = null;
-        document.getElementById('installBanner').classList.remove('show');
-      } else {
-        const isIOS = /iphone|ipad|ipod/i.test(navigator.userAgent);
-        if (isIOS) {
-          showToast('Safari-এর Share বাটন চেপে "Add to Home Screen" সিলেক্ট করুন');
-        } else {
-          showToast('ব্রাউজার মেনু (⋮) থেকে "Install app" বা "Add to Home screen" চাপুন');
-        }
-      }
-    }
-
-    function dismissInstallBanner() {
-      sessionStorage.setItem('hide_install_banner', '1');
-      document.getElementById('installBanner').classList.remove('show');
-    }
-
-    if ('serviceWorker' in navigator && (location.protocol === 'https:' || location.hostname === 'localhost' || location.hostname === '127.0.0.1')) {
-      window.addEventListener('load', () => {
-        navigator.serviceWorker.register('./sw.js').catch(() => {});
       });
     }
 
-    resetMatch(true);
-    renderAll();
+    function joinMatch(id, entry) {
+      let current = JSON.parse(localStorage.getItem('ludo_current_user'));
+      if ((current.joined || []).includes(id)) return;
+      if (current.balance < entry) {
+        alert('আপনার ওয়ালেটে পর্যাপ্ত ব্যালেন্স নেই!');
+        return;
+      }
+      current.balance -= entry;
+      current.joined = [...(current.joined || []), id];
+
+      let users = JSON.parse(localStorage.getItem('ludo_users') || '[]');
+      users = users.map(u => u.phone === current.phone ? current : u);
+
+      localStorage.setItem('ludo_users', JSON.stringify(users));
+      localStorage.setItem('ludo_current_user', JSON.stringify(current));
+      loadApp();
+    }
+
+    function switchPage(page, btn) {
+      document.querySelectorAll('.tab-page').forEach(p => p.classList.remove('active'));
+      document.querySelectorAll('.nav-item').forEach(b => b.classList.remove('active'));
+      document.getElementById('page-' + page).classList.add('active');
+      btn.classList.add('active');
+    }
+
+    function logoutUser() {
+      localStorage.removeItem('ludo_current_user');
+      loadApp();
+    }
+
+    if ('serviceWorker' in navigator) {
+      navigator.serviceWorker.register('sw.js').catch(() => {});
+    }
+
+    loadApp();
   </script>
 </body>
 </html>
